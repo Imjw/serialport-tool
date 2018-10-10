@@ -1,5 +1,6 @@
 package com.imjw.common;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -30,7 +31,7 @@ public class SerialportInit implements InitializingBean{
             System.out.println("没有搜索到有效串口！");
         } else {
             try {
-            	serialport = SerialPortUtil.openPort("COM3", 9600);
+            	serialport = SerialPortUtil.openPort("COM5", 9600);
                 if (serialport != null) {
                     System.out.println(serialport.getName()+"串口已打开");
                 }
@@ -65,7 +66,13 @@ public class SerialportInit implements InitializingBean{
 	
 	@CachePut(value = "weight", key = "weight")
 	public String transDate(byte[] data) {
-		return new String(data);
+		String result = "";
+		try {
+			result = new String(data, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 }
