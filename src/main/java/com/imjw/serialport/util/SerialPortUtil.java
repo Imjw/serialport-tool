@@ -1,11 +1,11 @@
 package com.imjw.serialport.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.TooManyListenersException;
 
 import gnu.io.CommPort;
@@ -24,6 +24,7 @@ import gnu.io.UnsupportedCommOperationException;
 @SuppressWarnings("all")
 public class SerialPortUtil {
 	
+	public static String weightValue = "";
 
     /**
      * 查找所有可用端口
@@ -133,16 +134,18 @@ public class SerialPortUtil {
      */
     public static byte[] readFromPort(SerialPort serialPort) {
         InputStream in = null;
-        byte[] bytes = {};
+        byte[] bytes = null;
+        ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
         try {
             in = serialPort.getInputStream();
             // 缓冲区大小为一个字节
             byte[] readBuffer = new byte[1024];
-            int bytesNum = in.read(readBuffer);
+            int bytesNum = in.read(readBuffer,0,1024);
             while (bytesNum > 0) {
-                bytes = ArrayUtils.concat(bytes, readBuffer);
-                bytesNum = in.read(readBuffer);
+                swapStream.write(readBuffer, 0, bytesNum);  
+                bytesNum = in.read(readBuffer,0,1024);
             }
+            bytes = swapStream.toByteArray();  
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
