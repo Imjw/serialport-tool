@@ -2,9 +2,9 @@ package com.imjw.common;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +17,8 @@ import gnu.io.SerialPort;
 @Component
 public class SerialportInit implements InitializingBean{
 
+	Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	SerialPort serialport;
 	
 	@Override
@@ -26,17 +28,18 @@ public class SerialportInit implements InitializingBean{
 	
 	public void initPortListener() {
 		List<String> commNames = SerialPortUtil.findPorts();
-		System.out.println(commNames);
+		logger.info("扫描到有效串口：{}",commNames);
 		if (commNames.isEmpty()) {
-            System.out.println("没有搜索到有效串口！");
+			logger.error("没有搜索到有效串口！");
+            return;
         } else {
             try {
             	serialport = SerialPortUtil.openPort("COM3", 9600);
                 if (serialport != null) {
-                    System.out.println(serialport.getName()+"串口已打开");
+                	logger.info("串口[{}]已打开",serialport.getName());
                 }
             } catch (PortInUseException e) {
-            	System.out.println("串口已被占用！");
+            	logger.error("串口已被占用！");
             }
         }
 		// 添加串口监听
@@ -47,18 +50,18 @@ public class SerialportInit implements InitializingBean{
                 byte[] data = null;
                 try {
                     if (serialport == null) {
-                        System.out.println("串口对象为空，监听失败！");
+                    	logger.info("串口对象为空，监听失败！");
                     } else {
                         // 读取串口数据
                         data = SerialPortUtil.readFromPort(serialport);
 
                         // 以字符串的形式接收数据
                         String weight = transDate(data);
-                        System.out.println(weight);
+                        logger.info("获取重量值：{}", weight);
                         SerialPortUtil.weightValue = weight;
                     }
                 } catch (Exception e) {
-                    System.out.println(e.toString());
+                	logger.error("读取串口数据异常！",e);
                 }
             }
         });
@@ -69,14 +72,11 @@ public class SerialportInit implements InitializingBean{
 		try {
 			result = new String(data, "GBK");
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			logger.error("byte[] to String failed !", e);
+			return "";
 		}
-		String regEx="[^0-9.]";
-		Pattern p = Pattern.compile(regEx);
-		Matcher m = p.matcher(result); 
-		result = m.replaceAll("").trim();
-		System.out.println(result);
-		return result;
+		logger.info("serialport info : {}",result.replaceAll("[\\s]", ""));
+		return result.replaceAll("[^0-9.]", "");
 	}
 
 }

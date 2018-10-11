@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.TooManyListenersException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
@@ -23,6 +26,8 @@ import gnu.io.UnsupportedCommOperationException;
  */
 @SuppressWarnings("all")
 public class SerialPortUtil {
+	
+	static Logger logger = LoggerFactory.getLogger(SerialPortUtil.class);
 	
 	public static String weightValue = "";
 
@@ -60,7 +65,7 @@ public class SerialPortUtil {
             CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
             if ( portIdentifier.isCurrentlyOwned() )
             {
-                System.out.println("Error: Port is currently in use");
+            	logger.error("Error: Port is currently in use");
             }
             // 打开端口，并给端口名字和一个timeout（打开操作的超时时间）
             CommPort commPort = portIdentifier.open(portName, 2000);
@@ -226,7 +231,7 @@ public class SerialPortUtil {
                 break;
 
             case SerialPortEvent.BI: // 10.通讯中断
-                System.out.println("与串口设备通讯中断");
+                logger.error("与串口设备通讯中断");
                 break;
 
             default:
