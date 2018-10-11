@@ -5,7 +5,7 @@
 
 	<groupId>com.imjw</groupId>
 	<artifactId>serialport-tool</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>serialport-tool</name>
@@ -72,6 +72,12 @@
 	                    </goals>
 	                </execution>
 	            </executions>
+	            <configuration>
+	            	<executable>%BASE%\jre1.8_111\bin\java</executable>
+		            <arguments>
+		                <argument>-Xms512m -Xmx512m --comm-name=COM3 --baudrate=9600</argument>
+		            </arguments>
+		        </configuration>
 	        </plugin>
 		</plugins>
 	</build>

@@ -6,3 +6,6 @@ server:
   port: 8232
   servlet:
     context-path: /
+    
+comm-name: COM3
+baudrate: 9600

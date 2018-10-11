@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.imjw.serialport.util.SerialPortUtil;
@@ -21,6 +22,11 @@ public class SerialportInit implements InitializingBean{
 	
 	SerialPort serialport;
 	
+	@Value("${comm-name}")
+	String commName;
+	@Value("${baudrate}")
+	Integer baudrate;
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		initPortListener();
@@ -28,13 +34,13 @@ public class SerialportInit implements InitializingBean{
 	
 	public void initPortListener() {
 		List<String> commNames = SerialPortUtil.findPorts();
-		logger.info("扫描到有效串口：{}",commNames);
+		logger.info("扫描到有效串口：{}, 配置串门名称：{},波特率：{}",commNames,commName,baudrate);
 		if (commNames.isEmpty()) {
 			logger.error("没有搜索到有效串口！");
             return;
         } else {
             try {
-            	serialport = SerialPortUtil.openPort("COM3", 9600);
+            	serialport = SerialPortUtil.openPort(commName, baudrate);
                 if (serialport != null) {
                 	logger.info("串口[{}]已打开",serialport.getName());
                 }
