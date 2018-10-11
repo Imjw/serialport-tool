@@ -1,4 +1,4 @@
-package com.imjw.common;
+package com.imjw.serialport.common;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.imjw.service;
+package com.imjw.serialport.service;
 
 import org.springframework.stereotype.Service;
 
